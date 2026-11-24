@@ -1,0 +1,16 @@
+# Python environment and caches: rebuilt from a dependency list, never committed
+.venv/
+__pycache__/
+
+# Your editor settings
+.vscode/
+
+# YOLO outputs and model weights: large and re-downloadable
+runs/
+*.pt
+
+# Datasets and clips: non-commercial licenses, so link to them instead
+data/
+
+# API keys (Week 2) live here and must never reach GitHub
+.env
