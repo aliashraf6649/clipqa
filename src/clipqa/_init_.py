@@ -1,0 +1,1 @@
+"""ClipQA: ask questions about short street and traffic clips."""

@@ -14,3 +14,6 @@ data/
 
 # API keys (Week 2) live here and must never reach GitHub
 .env
+
+# Packaging leftovers
+*.egg-info/
