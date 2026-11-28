@@ -7,8 +7,12 @@ name = "clipqa"
 version = "0.1.0"
 description = "Ask questions about short street and traffic clips; answers come with timestamps and evidence frames."
 readme = "README.md"
+
+
 requires-python = ">=3.11"
+
 dependencies = [
+    "lap>=0.5.12",
     "polars>=2.2",
     "ultralytics>=8.4",
 ]
