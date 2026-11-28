@@ -238,3 +238,133 @@ text = "كم شخصًا يرتدي سروالًا قصيرًا في هذا ال�
 answer_type = "count"
 # Labelled by hand: persons 5, 10 and 29.
 truth = { value = 3 }
+
+# ---------------------------------------------------------------------------
+# MVI_39051 (UA-DETRAC): a city road on a sunny day (45 s). All traffic comes
+# toward the camera, right to left. UA-DETRAC labels only cars, vans, buses and
+# trucks, and its frames are 960 px wide, so the middle of the frame is x = 480.
+# ---------------------------------------------------------------------------
+
+[[question]]
+id = "39051-01"
+clip = "MVI_39051"
+lang = "en"
+text = "When does the bus first appear?"
+answer_type = "seconds"
+truth = { tool = "first_seen", label = "bus" }
+
+[[question]]
+id = "39051-02"
+clip = "MVI_39051"
+lang = "en"
+text = "What colour is the bus: yellow and white, red, green or blue?"
+answer_type = "choice"
+# Labelled by hand: a yellow-and-white articulated bus (track 20, largest at 29.6 s).
+truth = { value = "yellow and white" }
+
+[[question]]
+id = "39051-03"
+clip = "MVI_39051"
+lang = "en"
+text = "How many different vehicles appear in this clip?"
+answer_type = "count"
+truth = { tool = "count_objects", label = ["car", "bus", "truck"] }
+
+[[question]]
+id = "39051-04"
+clip = "MVI_39051"
+lang = "en"
+text = "How many vehicles pass the middle of the frame from right to left?"
+answer_type = "count"
+truth = { tool = "count_crossings", label = ["car", "bus", "truck"], x = 480, direction = "right_to_left" }
+
+[[question]]
+id = "39051-05"
+clip = "MVI_39051"
+lang = "ar"
+text = "كم مركبة يمكنك أن تراها عند الثانية 30؟"
+answer_type = "count"
+truth = { tool = "count_at", label = ["car", "bus", "truck"], t = 30 }
+
+[[question]]
+id = "39051-06"
+clip = "MVI_39051"
+lang = "en"
+text = "Is there a truck in this clip?"
+answer_type = "yes_no"
+truth = { tool = "count_objects", label = "truck" }
+
+[[question]]
+id = "39051-07"
+clip = "MVI_39051"
+lang = "en"
+text = "How many different vehicles appear between the 20-second and 30-second marks?"
+answer_type = "count"
+truth = { tool = "count_objects", label = ["car", "bus", "truck"], t_from = 20, t_to = 30 }
+
+# ---------------------------------------------------------------------------
+# MVI_40901 (UA-DETRAC): a junction in the rain (53 s). Traffic goes both ways.
+# The top corners (a car park and distant traffic) are not labelled, so there
+# are no "how many vehicles can you see" questions here: a viewer would count
+# cars the answer key can't. Cyclists and scooters are not labelled either.
+# ---------------------------------------------------------------------------
+
+[[question]]
+id = "40901-01"
+clip = "MVI_40901"
+lang = "ar"
+text = "متى تظهر الحافلة لأول مرة؟"
+answer_type = "seconds"
+truth = { tool = "first_seen", label = "bus" }
+
+[[question]]
+id = "40901-02"
+clip = "MVI_40901"
+lang = "en"
+text = "What colour is the bus: white, yellow, red or green?"
+answer_type = "choice"
+# Labelled by hand: a white coach with blue stripes (track 35, largest at 28.9 s).
+truth = { value = "white" }
+
+[[question]]
+id = "40901-03"
+clip = "MVI_40901"
+lang = "en"
+text = "How many vehicles cross the middle of the frame from left to right?"
+answer_type = "count"
+truth = { tool = "count_crossings", label = ["car", "bus", "truck"], x = 480, direction = "left_to_right" }
+
+[[question]]
+id = "40901-04"
+clip = "MVI_40901"
+lang = "en"
+text = "How many vehicles cross the middle of the frame from right to left?"
+answer_type = "count"
+truth = { tool = "count_crossings", label = ["car", "bus", "truck"], x = 480, direction = "right_to_left" }
+
+[[question]]
+id = "40901-05"
+clip = "MVI_40901"
+lang = "en"
+text = "How many buses appear in this clip?"
+answer_type = "count"
+truth = { tool = "count_objects", label = "bus" }
+
+[[question]]
+id = "40901-06"
+clip = "MVI_40901"
+lang = "ar"
+text = "هل توجد شاحنة في هذا المقطع؟"
+answer_type = "yes_no"
+# The police tow truck that stands in the junction for the whole clip.
+truth = { tool = "count_objects", label = "truck" }
+
+[[question]]
+id = "40901-07"
+clip = "MVI_40901"
+lang = "en"
+text = "Is anyone riding a bicycle in this clip?"
+answer_type = "yes_no"
+# Labelled by hand: several cyclists, e.g. one riding beside the bus at 28.9 s.
+# UA-DETRAC doesn't label cyclists, so this answer can't come from the ground truth.
+truth = { value = "yes" }

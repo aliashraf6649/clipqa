@@ -1,23 +1,46 @@
-# The eval answer key: each question's correct answer, computed from the ground truth.
+"""The eval answer key: each question's correct answer, computed from the ground truth."""
 import tomllib
+from functools import cache
 from pathlib import Path
+
 import polars as pl
-from clipqa.track_tools import count_at, count_crossings, count_objects, first_seen
 
-# The functions a question's `truth` can name
+from clipqa.detrac import load_detrac_gt
+from clipqa.ground_truth import load_mot_gt
+from clipqa.track_tools import (
+    count_at,
+    count_crossings,
+    count_objects,
+    drop_short_tracks,
+    first_seen,
+    visible_only,
+)
 
+MOT_DIR = Path("data/MOT17/train")
+DETRAC_XML_DIR = Path("data/DETRAC/DETRAC-Test-Annotations-XML")
+
+# The functions a question's `truth` can name.
 TOOLS = {
     "count_objects": count_objects,
     "count_at": count_at,
     "count_crossings": count_crossings,
-    "first_seen": first_seen
+    "first_seen": first_seen,
 }
 
 
 def load_questions(path: Path) -> list[dict]:
-    # Read the eval questions from a TOML file.
+    """Read the eval questions from a TOML file."""
     with open(path, "rb") as f:
         return tomllib.load(f)["question"]
+
+
+@cache
+def ground_truth(clip: str) -> pl.DataFrame:
+    """One clip's ground truth, keeping only what a viewer could really see."""
+    if clip.startswith("MVI_"):  # UA-DETRAC has no visibility labels: only the 0.5 s rule
+        return drop_short_tracks(load_detrac_gt(DETRAC_XML_DIR / f"{clip}.xml"))
+    return visible_only(load_mot_gt(MOT_DIR / f"{clip}-FRCNN"))
+
 
 def tool_answer(question: dict, tracks: pl.DataFrame) -> int | float | str | None:
     """Answer a question by running its tool on a track table."""
