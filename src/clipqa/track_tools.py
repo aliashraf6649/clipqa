@@ -7,16 +7,18 @@ become the agent's tools.
 
 import polars as pl
 
+def drop_short_tracks(tracks: pl.DataFrame, min_frames: int = 15) -> pl.DataFrame:
+    """Drop objects seen in fewer than `min_frames` frames: usually flicker or false detections."""
+    return tracks.filter(pl.len().over("track_id") >= min_frames)
+
+
 def visible_only(gt: pl.DataFrame, min_visibility: float = 0.5, min_frames: int = 15) -> pl.DataFrame:
     """Keep only the ground truth a viewer could really see.
 
     Drops rows where the object is less than `min_visibility` visible, then drops
     objects left with fewer than `min_frames` frames.
     """
-    return (
-        gt.filter(pl.col("visibility") >= min_visibility)
-        .filter(pl.len().over("track_id") >= min_frames)
-    )
+    return drop_short_tracks(gt.filter(pl.col("visibility") >= min_visibility), min_frames)
 
 def count_objects (tracks: pl.DataFrame, label: str, t_from: float = 0.0, t_to: float | None = None) -> int:
     # How many different objects with this label appear between t_from and t_to.(seconds)
