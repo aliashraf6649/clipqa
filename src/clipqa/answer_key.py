@@ -5,12 +5,13 @@ from pathlib import Path
 
 import polars as pl
 
-from clipqa.detrac import load_detrac_gt
+from clipqa.detrac import load_detrac_gt, load_ignored_regions
 from clipqa.ground_truth import load_mot_gt
 from clipqa.track_tools import (
     count_at,
     count_crossings,
     count_objects,
+    drop_in_regions,
     drop_short_tracks,
     first_seen,
     visible_only,
@@ -18,6 +19,7 @@ from clipqa.track_tools import (
 
 MOT_DIR = Path("data/MOT17/train")
 DETRAC_XML_DIR = Path("data/DETRAC/DETRAC-Test-Annotations-XML")
+TRACKS_DIR = Path("data/tracks/yolo26m")
 
 # The functions a question's `truth` can name.
 TOOLS = {
@@ -40,6 +42,15 @@ def ground_truth(clip: str) -> pl.DataFrame:
     if clip.startswith("MVI_"):  # UA-DETRAC has no visibility labels: only the 0.5 s rule
         return drop_short_tracks(load_detrac_gt(DETRAC_XML_DIR / f"{clip}.xml"))
     return visible_only(load_mot_gt(MOT_DIR / f"{clip}-FRCNN"))
+
+
+@cache
+def yolo_tracks(clip: str) -> pl.DataFrame:
+    """YOLO's saved tracks for one clip, minus boxes in UA-DETRAC's ignored regions."""
+    tracks = pl.read_parquet(TRACKS_DIR / f"{clip}.parquet")
+    if clip.startswith("MVI_"):  # nothing is labelled there, so YOLO's boxes there can't be checked
+        tracks = drop_in_regions(tracks, load_ignored_regions(DETRAC_XML_DIR / f"{clip}.xml"))
+    return tracks
 
 
 def tool_answer(question: dict, tracks: pl.DataFrame) -> int | float | str | None:

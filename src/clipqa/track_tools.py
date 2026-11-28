@@ -70,3 +70,13 @@ def first_seen(tracks: pl.DataFrame, label: str | list[str]) -> float | None:
     """When an object with this label is first visible, in seconds; None if never."""
     rows = tracks.filter(has_label(label))
     return rows["t"].min() if rows.height > 0 else None
+
+
+def drop_in_regions(tracks: pl.DataFrame, regions: list[tuple[float, float, float, float]]) -> pl.DataFrame:
+    """Drop boxes whose centre lies inside any of the regions (x1, y1, x2, y2)."""
+    cx = (pl.col("x1") + pl.col("x2")) / 2
+    cy = (pl.col("y1") + pl.col("y2")) / 2
+    inside = pl.lit(False)
+    for x1, y1, x2, y2 in regions:
+        inside = inside | (cx.is_between(x1, x2) & cy.is_between(y1, y2))
+    return tracks.filter(~inside)
